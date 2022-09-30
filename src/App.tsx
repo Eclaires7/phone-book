@@ -1,18 +1,18 @@
-import React from 'react';
-/** @jsxImportSource @emotion/react */
-import { css } from "@emotion/react"
-import './App.css';
+import ListContainer from './containers/ListContainer'
+import FormContainer from './containers/FormContainer'
+import {Body, Container} from './emotion'
 
 let name = 'aa';
 console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ name', name)
 
 function App() {
   return (
-    <div css={css`
-    background-color: hotpink;
-  `}>
-      Hahahaaa
-    </div>
+    <Body>
+      <Container>
+        <FormContainer />
+        <ListContainer />
+      </Container>
+    </Body>
   );
 }
 
