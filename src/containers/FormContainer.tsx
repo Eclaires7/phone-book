@@ -5,9 +5,6 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 import {Heading1} from '../emotion'
 import {Button} from 'react-bootstrap';
 
-let name = 'aa';
-console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ name', name)
-
 function FormContainer() {
   const [inputData, setInputData] = useState({
     first_name: '',
@@ -43,7 +40,6 @@ function FormContainer() {
   function handlePhones(e: any, phoneIndex: number) {
     let data = {...inputData}
     data.phones[phoneIndex].number = e?.target?.value
-    console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ data', data)
     setInputData(data)
   }
 
