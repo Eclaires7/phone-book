@@ -14,9 +14,7 @@ const boxShadow = css({
 
 export const Body = styled('div')`
   font-size: ${medium};
-  height: 100vh;
   color: #2e3134d6;
-  background: ${lightColor};
   font-family: 'Open Sauce One',sans-serif;
 `;
 
@@ -37,12 +35,47 @@ export const ContactPill = styled('div')`
   padding: ${medium};
   border-radius: ${small};
   background: #fff;
-  flex: 1 0 25%;
+  flex: 1 0 30%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   min-width: 200px;
   margin-bottom: ${small};
   margin-left: ${small};
   margin-right: ${small};
-  ${boxShadow}
+  cursor: pointer;
+  ${boxShadow};
+`;
+
+export const Profile = styled('div')`
+  background: #c75c5c;
+  border-radius: 23px;
+  padding: 12px;
+  width: 46px;
+  height: 46px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  margin-right: ${small};
+`;
+
+export const Information = styled('div')`
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const Description = styled('div')`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Heading1 = styled('div')`
+  font-weight: 600;
+  font-size: 24px;
+  width: max-content;
 `;
 
 export const Heading2 = styled('div')`

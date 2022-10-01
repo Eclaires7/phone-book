@@ -1,6 +1,7 @@
 import ListContainer from './containers/ListContainer'
 import FormContainer from './containers/FormContainer'
 import {Body, Container} from './emotion'
+import './App.css';
 
 let name = 'aa';
 console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ name', name)
