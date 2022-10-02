@@ -1,54 +1,55 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react"
-import React, {useState, useEffect} from 'react';
-import { gql, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {Modal, Button} from 'react-bootstrap';
+import React, {useState, useEffect} from 'react';
+import { PaginatedList } from "react-paginated-list";
+import {NotificationManager} from 'react-notifications';
 
-import {ListWrapper, Heading1} from '../emotion'
-import { GET_LIST } from '../hooks/useGetPosts';
+import {ListWrapper} from '../emotion'
+import { DELETE_CONTACT, POST_NUMBER } from '../hooks/useGetPosts';
 import ContactPillComponent from '../components/ContactPillComponent'
 
-function ListContainer() {
+function ListContainer({list, getList, limit, handleSearch}) {
   const [show, setShow] = useState(false);
-  const [list, setList] = useState<any[]>([]);
-  const [keyword, setKeyword] =  useState<string | null>('');
-  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ keyword', keyword)
   const [clickIndex, setClickIndex] = useState(0);
+  const [newNumber, setNewNumber] = useState({isNewNumber: false, number: ''})
 
   const handleClose = () => setShow(false);
   const handleShow = (dataIndex: any) => {
     setClickIndex(dataIndex)
     setShow(true)
   };
-  const { loading, error, data: listPhone, refetch: getList } = useQuery(GET_LIST
-  //   , {
-  //   variables: {
-  //     "where":  {
-  //         "first_name": {"_like": "%John%" }
-  //     }
-  // },}
-  );
+  
+  const [addNewNumber, {data: addLastName}] = useMutation(POST_NUMBER)
+  const [deleteContact, {data: dataDeleted}] = useMutation(DELETE_CONTACT)
 
   useEffect(() => {
-    setList(listPhone?.contact)
-  }, [listPhone])
-  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ list', list)
+    if(dataDeleted?.delete_contact_by_pk?.id === list?.[clickIndex]?.id && dataDeleted?.delete_contact_by_pk?.id !== undefined) {
+      handleClose()
+      NotificationManager.success('Delete Success')
+      getList()
+    }
+  }, [dataDeleted])
 
   useEffect(() => {
-    getList({
-      "where":  {
-        _or: [
-          { first_name: {"_like": `%${keyword}%` } }, 
-          { last_name: {"_like": `%${keyword}%` } }, 
-          { phones: {number: {"_like": `%${keyword}%` }} }, 
-        ]
-      }
-    ,})
-  }, [keyword])
+    if(!show) {
+      setNewNumber({isNewNumber: false, number: ''})
+    }
+  }, [show])
 
-  function handleSearch() {
-    const keyword = (document.getElementById('search') as HTMLInputElement).value
-    setKeyword(keyword)
+  function addNumber() {
+    const newNumber = (document.getElementById('newNumber') as HTMLInputElement).value
+
+    addNewNumber({variables: {
+      "contact_id": list?.[clickIndex]?.id,
+      "phone_number": newNumber
+    }})
+    setNewNumber({isNewNumber: false, number: ''})
+  }
+
+  function handleDeleteContact() {
+    deleteContact({variables: {id: list?.[clickIndex]?.id}})
   }
 
   return (
@@ -58,23 +59,21 @@ function ListContainer() {
         <input type='text' css={css`height: 35px`} id='search' placeholder='keyword...' />
         <Button css={css`margin-left: 8px`} onClick={()=> handleSearch()}>Search</Button>
       </div>
-      {/* paginationnya gimana? per fav apa gmn */}
-      <Heading1>Favourites</Heading1>
-      <ListWrapper>
-        {list?.map((data: any, dataIndex: any) => {
-          return (
-            <ContactPillComponent key={dataIndex} data={data} dataIndex={dataIndex} handleShow={handleShow} isFavourite />
-          )
-        })}
-      </ListWrapper>
-      <Heading1>Contacts</Heading1>
-      <ListWrapper>
-        {list?.map((data: any, dataIndex: any) => {
-          return (
-            <ContactPillComponent key={dataIndex} data={data} dataIndex={dataIndex} handleShow={handleShow} />
-          )
-        })}
-      </ListWrapper>
+      {list !== undefined && list?.length > 0 &&
+        <PaginatedList
+        list={list}
+        itemsPerPage={limit}
+        renderList={(item) => (
+          <ListWrapper>
+              {item?.map((data: any, dataIndex: any) => {
+                return (
+                  <ContactPillComponent key={dataIndex} data={data} dataIndex={dataIndex} handleShow={handleShow} isFavourite />
+                  )
+                })}
+            </ListWrapper>
+          )}
+        />
+      }
       {show &&
         <Modal
           show={show}
@@ -85,19 +84,26 @@ function ListContainer() {
             <Modal.Title>{list?.[clickIndex]?.first_name} {list?.[clickIndex]?.last_name}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-          {list?.[clickIndex]?.phones?.map((phone: any, phoneIndex: any) => {
-            return (
-              <div key={phoneIndex}>
-                {phone?.number}
-              </div>
-            )
-          })}
+            {list?.[clickIndex]?.phones?.map((phone: any, phoneIndex: any) => {
+              return (
+                <div key={phoneIndex}>
+                  {phone?.number}
+                </div>
+              )
+            })}
+            {newNumber?.isNewNumber
+              ? <input placeholder='new number...' id='newNumber' />
+              : <Button onClick={()=> setNewNumber({isNewNumber: true, number: ''})}>+</Button>
+            }
+            
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
+            <Button className='btn btn-danger' onClick={()=>handleDeleteContact()}>
+              Delete Contact
             </Button>
-            <Button variant="primary">Understood</Button>
+            {newNumber?.isNewNumber &&
+              <Button variant="primary" onClick={()=> addNumber()}>Add Number</Button>
+            }
           </Modal.Footer>
         </Modal>
       }

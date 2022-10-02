@@ -12,19 +12,19 @@ type Props = {
 };
 
 const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow, isFavourite}) => {
+  let name = `${data?.first_name} ${data?.last_name}`
+  if(name.length > 10) {
+    name = name.substring(0, 10) + '...'
+  }
+
   return (
-    <ContactPill onClick={()=> handleShow(dataIndex)}>
+    <ContactPill onClick={()=> handleShow(dataIndex)} className='contact-pill'>
         <Profile>{data?.first_name?.substring(0,1).toUpperCase()}{data?.last_name?.substring(0,1).toUpperCase()}</Profile>
         <Information>
             <Description>
-            <Heading2>{data?.first_name} {data?.last_name}</Heading2>
+            <Heading2>{name}</Heading2>
             <div css={css`margin-top: 8px;font-size: 12px`}>
                 <div>{data?.phones?.length} saved number</div>
-                {/* {data?.phones?.map((phone: any, phoneIndex: any) => {
-                return (
-                    <div>{phone?.number}</div>
-                    )
-                })} */}
             </div>
             </Description>
             {isFavourite &&

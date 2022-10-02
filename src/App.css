@@ -1,3 +1,9 @@
 body {
     background: #470f0f1f;
 }
+
+@media only screen and (max-width: 800px) {
+  .contact-pill {
+    max-width: unset !important;
+  }
+}

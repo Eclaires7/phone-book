@@ -28,9 +28,9 @@ export const ListWrapper = styled('div')`
   margin-top: ${large};
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 `;
 
-// cek media kalo lbh kecil dari apa baru kasih min-width
 export const ContactPill = styled('div')`
   padding: ${medium};
   border-radius: ${small};
@@ -39,6 +39,7 @@ export const ContactPill = styled('div')`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  max-width: 30%;
   min-width: 200px;
   margin-bottom: ${small};
   margin-left: ${small};
@@ -81,4 +82,11 @@ export const Heading1 = styled('div')`
 export const Heading2 = styled('div')`
   font-weight: 600;
   width: max-content;
+`;
+
+export const FormWrapper = styled('div')`
+  background: #fff;
+  border-radius: ${small};
+  padding: ${medium};
+  ${boxShadow};
 `;
