@@ -11,7 +11,6 @@ import { GET_LIST } from './hooks/useGetPosts';
 function App() {
   const [list, setList] = useState<any[]>([]);
   const limit = 10;
-  const [offset, setOffset] = useState(0);
   const [keyword, setKeyword] =  useState<string | null>('');
 
   const paramGetList = useMemo(() => ({
@@ -22,7 +21,7 @@ function App() {
         { phones: {number: {"_like": `%${keyword}%` }} }, 
       ]
     } : undefined
-  }), [offset, keyword])
+  }), [keyword])
 
   const {data: listPhone, refetch: getList} = useQuery(GET_LIST
     , {variables: paramGetList,}

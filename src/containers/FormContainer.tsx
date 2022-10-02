@@ -130,9 +130,9 @@ function FormContainer({getList, checkUnique, dataUnique}) {
             {inputData?.phones?.map((phone: any, phoneIndex: number) => {
               return (
                 <div>
-                  <input key={phoneIndex} type='text' value={inputData?.phones?.[phoneIndex]?.number} onChange={(e)=> handlePhones(e, phoneIndex)} name='addPhone' placeholder={'Phone ' + (phoneIndex + 1) + '...'} />
+                  <input key={phoneIndex} css={css`margin-bottom: 8px`} type='text' value={inputData?.phones?.[phoneIndex]?.number} onChange={(e)=> handlePhones(e, phoneIndex)} name='addPhone' placeholder={'Phone ' + (phoneIndex + 1) + '...'} />
                   {inputData?.phones?.length > 1 &&
-                    <Button className="btn btn-danger" onClick={()=> deletePhone(phoneIndex)}>-</Button>
+                    <Button css={css`margin-left: 8px`} className="btn btn-danger" onClick={()=> deletePhone(phoneIndex)}>-</Button>
                   }
                 </div>
               )
@@ -140,7 +140,7 @@ function FormContainer({getList, checkUnique, dataUnique}) {
             <Button onClick={()=> addPhone()}>+</Button>
           </div>
         </div>
-        <Button onClick={()=> checkUniqueName()}>Create New</Button>
+        <Button css={css`margin-right: 8px`} onClick={()=> checkUniqueName()}>Create New</Button>
         <Button className='btn btn-secondary' onClick={()=> {setIsFormOpen(false); resetData()}}>Cancel</Button>
       </FormWrapper>
     );

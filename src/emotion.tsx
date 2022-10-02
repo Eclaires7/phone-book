@@ -28,7 +28,7 @@ export const ListWrapper = styled('div')`
   margin-top: ${large};
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: -webkit-box;
 `;
 
 export const ContactPill = styled('div')`

@@ -41,15 +41,39 @@ function ListContainer({list, getList, limit, handleSearch}) {
   function addNumber() {
     const newNumber = (document.getElementById('newNumber') as HTMLInputElement).value
 
-    addNewNumber({variables: {
-      "contact_id": list?.[clickIndex]?.id,
-      "phone_number": newNumber
-    }})
-    setNewNumber({isNewNumber: false, number: ''})
+    if (newNumber !== '') { 
+      addNewNumber({variables: {
+        "contact_id": list?.[clickIndex]?.id,
+        "phone_number": newNumber
+      }})
+      setNewNumber({isNewNumber: false, number: ''})
+    } else {
+      NotificationManager.error('Number must not be empty')
+    }
   }
 
   function handleDeleteContact() {
     deleteContact({variables: {id: list?.[clickIndex]?.id}})
+  }
+
+  function handleFavourite() {
+    let favourite = localStorage.getItem('favourites')
+    let contact = {...list?.[clickIndex]}
+    contact.isFavourite = true
+
+    if (favourite === null || favourite?.length === 0) { //new
+      localStorage.setItem('favourites', JSON.stringify([contact]))
+    } else {
+      let arr : any[] = []
+      arr = JSON.parse(favourite)
+      const exist = arr?.findIndex(element => element?.id === contact?.id)
+      if (exist === -1) { //add to local storage
+        arr = [...arr, contact]
+      } else { //remove from local storage
+        arr = arr.splice(exist, 1)
+      }
+      localStorage.setItem('favourites', JSON.stringify(arr))
+    }
   }
 
   return (
@@ -86,21 +110,29 @@ function ListContainer({list, getList, limit, handleSearch}) {
           <Modal.Body>
             {list?.[clickIndex]?.phones?.map((phone: any, phoneIndex: any) => {
               return (
-                <div key={phoneIndex}>
-                  {phone?.number}
-                </div>
+                <>
+                  <div key={phoneIndex} css={css`display:flex;justify-content: space-between`}>
+                    <div>{phone?.number}</div>
+                    <div>
+                      <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png" css={css`cursor:pointer`} width={15} height={15} />
+                    </div>
+                  </div>
+                  <hr />
+                </>
               )
             })}
             {newNumber?.isNewNumber
               ? <input placeholder='new number...' id='newNumber' />
               : <Button onClick={()=> setNewNumber({isNewNumber: true, number: ''})}>+</Button>
             }
-            
           </Modal.Body>
           <Modal.Footer>
-            <Button className='btn btn-danger' onClick={()=>handleDeleteContact()}>
-              Delete Contact
-            </Button>
+            <Button className='btn btn-warning' onClick={()=>handleFavourite()}>Favourite</Button>
+            {!newNumber?.isNewNumber &&
+              <Button className='btn btn-danger' onClick={()=>handleDeleteContact()}>
+                Delete Contact
+              </Button>
+            }
             {newNumber?.isNewNumber &&
               <Button variant="primary" onClick={()=> addNumber()}>Add Number</Button>
             }
