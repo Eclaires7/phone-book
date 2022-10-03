@@ -57,15 +57,15 @@ function ListContainer({list, getList, limit, handleSearch}) {
   }
 
   function handleFavourite() {
-    let favourite = localStorage.getItem('favourites')
+    let favourites = localStorage.getItem('favourites')
     let contact = {...list?.[clickIndex]}
     contact.isFavourite = true
 
-    if (favourite === null || favourite?.length === 0) { //new
+    if (favourites === null || favourites?.length === 0) { //new
       localStorage.setItem('favourites', JSON.stringify([contact]))
     } else {
       let arr : any[] = []
-      arr = JSON.parse(favourite)
+      arr = JSON.parse(favourites)
       const exist = arr?.findIndex(element => element?.id === contact?.id)
       if (exist === -1) { //add to local storage
         arr = [...arr, contact]
@@ -74,6 +74,8 @@ function ListContainer({list, getList, limit, handleSearch}) {
       }
       localStorage.setItem('favourites', JSON.stringify(arr))
     }
+    handleClose()
+    getList() //cek ud bner belom
   }
 
   return (
@@ -91,7 +93,7 @@ function ListContainer({list, getList, limit, handleSearch}) {
           <ListWrapper>
               {item?.map((data: any, dataIndex: any) => {
                 return (
-                  <ContactPillComponent key={dataIndex} data={data} dataIndex={dataIndex} handleShow={handleShow} isFavourite />
+                  <ContactPillComponent key={dataIndex} data={data} dataIndex={dataIndex} handleShow={handleShow} />
                   )
                 })}
             </ListWrapper>

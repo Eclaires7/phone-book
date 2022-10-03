@@ -11,7 +11,7 @@ type Props = {
   isFavourite?: boolean
 };
 
-const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow, isFavourite}) => {
+const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow}) => {
   let name = `${data?.first_name} ${data?.last_name}`
   if(name.length > 10) {
     name = name.substring(0, 10) + '...'
@@ -27,7 +27,7 @@ const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow, isFavouri
                 <div>{data?.phones?.length} saved number</div>
             </div>
             </Description>
-            {isFavourite &&
+            {data?.isFavourite &&
               <img src="https://img.icons8.com/color/48/000000/filled-like.png" width={15} height={15} /> 
             }
         </Information>

@@ -10,6 +10,7 @@ import { GET_LIST } from './hooks/useGetPosts';
 
 function App() {
   const [list, setList] = useState<any[]>([]);
+  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ list', list)
   const limit = 10;
   const [keyword, setKeyword] =  useState<string | null>('');
 
@@ -29,7 +30,38 @@ function App() {
   const [checkUnique, { data: dataUnique }] = useLazyQuery(GET_LIST);
 
   useEffect(() => {
-    setList(listPhone?.contact)
+    if(listPhone !== undefined) {
+      let list = listPhone?.contact
+      const favourites = JSON.parse(localStorage.getItem('favourites') || '[]')
+      let withoutFav : any[] = []
+      if (favourites.length > 0) {
+        let arr = []
+
+        favourites?.map((favourite: any) => {
+          arr = list?.filter((function (item) {
+            return favourite?.id !== item?.id
+          }))
+        })
+
+        withoutFav = arr
+        let arrWithProperty : any[] = []
+        for(let element of withoutFav) {
+          element = {...element, isFavourite: false}
+          arrWithProperty.push(element)
+        }
+
+        withoutFav = arrWithProperty
+        favourites?.map((favourite: any) => (
+          withoutFav = [...withoutFav, favourite]
+        ))
+        
+        // sorting from fav to general
+        withoutFav.sort(x => x.isFavourite ? -1 : 1)
+        setList(withoutFav)
+      } else {
+        setList(list)
+      }
+    }
   }, [listPhone])
   
   function handleSearch() {
