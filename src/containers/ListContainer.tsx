@@ -2,7 +2,7 @@
 import { css } from "@emotion/react"
 import { useMutation } from "@apollo/client";
 import {Modal, Button} from 'react-bootstrap';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import { PaginatedList } from "react-paginated-list";
 import {NotificationManager} from 'react-notifications';
 
@@ -10,9 +10,15 @@ import {ListWrapper} from '../emotion'
 import { DELETE_CONTACT, POST_NUMBER } from '../hooks/useGetPosts';
 import ContactPillComponent from '../components/ContactPillComponent'
 
-function ListContainer({list, getList, limit, handleSearch}) {
+function ListContainer({list, getList, limit, handleSearch, setLocal}) {
   const [show, setShow] = useState(false);
+  const [page, setPage] = useState(1);
   const [clickIndex, setClickIndex] = useState(0);
+  const modifiedClickIndex = useMemo(() => {
+    return page === 1 ? clickIndex : clickIndex + (10 * (page-1))
+  }, [clickIndex])
+  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ clickIndex', clickIndex)
+  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ modifiedClickIndex', modifiedClickIndex)
   const [newNumber, setNewNumber] = useState({isNewNumber: false, number: ''})
 
   const handleClose = () => setShow(false);
@@ -21,11 +27,11 @@ function ListContainer({list, getList, limit, handleSearch}) {
     setShow(true)
   };
   
-  const [addNewNumber, {data: addLastName}] = useMutation(POST_NUMBER)
+  const [addNewNumber, {data: dataAdded}] = useMutation(POST_NUMBER)
   const [deleteContact, {data: dataDeleted}] = useMutation(DELETE_CONTACT)
 
   useEffect(() => {
-    if(dataDeleted?.delete_contact_by_pk?.id === list?.[clickIndex]?.id && dataDeleted?.delete_contact_by_pk?.id !== undefined) {
+    if(dataDeleted?.delete_contact_by_pk?.id === list?.[modifiedClickIndex]?.id && dataDeleted?.delete_contact_by_pk?.id !== undefined) {
       handleClose()
       NotificationManager.success('Delete Success')
       getList()
@@ -43,7 +49,7 @@ function ListContainer({list, getList, limit, handleSearch}) {
 
     if (newNumber !== '') { 
       addNewNumber({variables: {
-        "contact_id": list?.[clickIndex]?.id,
+        "contact_id": list?.[modifiedClickIndex]?.id,
         "phone_number": newNumber
       }})
       setNewNumber({isNewNumber: false, number: ''})
@@ -53,16 +59,17 @@ function ListContainer({list, getList, limit, handleSearch}) {
   }
 
   function handleDeleteContact() {
-    deleteContact({variables: {id: list?.[clickIndex]?.id}})
+    deleteContact({variables: {id: list?.[modifiedClickIndex]?.id}})
   }
 
   function handleFavourite() {
     let favourites = localStorage.getItem('favourites')
-    let contact = {...list?.[clickIndex]}
+    let contact = {...list?.[modifiedClickIndex]}
     contact.isFavourite = true
 
     if (favourites === null || favourites?.length === 0) { //new
       localStorage.setItem('favourites', JSON.stringify([contact]))
+      setLocal(JSON.stringify([contact]))
     } else {
       let arr : any[] = []
       arr = JSON.parse(favourites)
@@ -70,12 +77,12 @@ function ListContainer({list, getList, limit, handleSearch}) {
       if (exist === -1) { //add to local storage
         arr = [...arr, contact]
       } else { //remove from local storage
-        arr = arr.splice(exist, 1)
+        arr.splice(exist, 1)
       }
       localStorage.setItem('favourites', JSON.stringify(arr))
+      setLocal(JSON.stringify(arr))
     }
     handleClose()
-    getList() //cek ud bner belom
   }
 
   return (
@@ -89,6 +96,7 @@ function ListContainer({list, getList, limit, handleSearch}) {
         <PaginatedList
         list={list}
         itemsPerPage={limit}
+        onPageChange={(items: any, currentPage: number) => setPage(currentPage)}
         renderList={(item) => (
           <ListWrapper>
               {item?.map((data: any, dataIndex: any) => {
@@ -107,10 +115,10 @@ function ListContainer({list, getList, limit, handleSearch}) {
           onHide={handleClose}
         >
           <Modal.Header closeButton>
-            <Modal.Title>{list?.[clickIndex]?.first_name} {list?.[clickIndex]?.last_name}</Modal.Title>
+            <Modal.Title>{list?.[modifiedClickIndex]?.first_name} {list?.[modifiedClickIndex]?.last_name}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {list?.[clickIndex]?.phones?.map((phone: any, phoneIndex: any) => {
+            {list?.[modifiedClickIndex]?.phones?.map((phone: any, phoneIndex: any) => {
               return (
                 <>
                   <div key={phoneIndex} css={css`display:flex;justify-content: space-between`}>
@@ -129,7 +137,7 @@ function ListContainer({list, getList, limit, handleSearch}) {
             }
           </Modal.Body>
           <Modal.Footer>
-            <Button className='btn btn-warning' onClick={()=>handleFavourite()}>Favourite</Button>
+            <Button className='btn btn-warning' onClick={()=>handleFavourite()}>{list?.[modifiedClickIndex]?.isFavourite ? 'Unfavourite' : 'Favourite'}</Button>
             {!newNumber?.isNewNumber &&
               <Button className='btn btn-danger' onClick={()=>handleDeleteContact()}>
                 Delete Contact

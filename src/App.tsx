@@ -10,9 +10,10 @@ import { GET_LIST } from './hooks/useGetPosts';
 
 function App() {
   const [list, setList] = useState<any[]>([]);
-  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ list', list)
+  // console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ list', list)
   const limit = 10;
   const [keyword, setKeyword] =  useState<string | null>('');
+  const [local, setLocal] = useState(localStorage.getItem('favourites'))
 
   const paramGetList = useMemo(() => ({
     "where": keyword !== '' ? {
@@ -37,8 +38,10 @@ function App() {
       if (favourites.length > 0) {
         let arr = []
 
-        favourites?.map((favourite: any) => {
-          arr = list?.filter((function (item) {
+        favourites?.map((favourite: any) => { 
+          console.log(favourite,'favourite');
+          
+          arr = list?.filter((function (item: any) {
             return favourite?.id !== item?.id
           }))
         })
@@ -62,7 +65,7 @@ function App() {
         setList(list)
       }
     }
-  }, [listPhone])
+  }, [listPhone, local])
   
   function handleSearch() {
     const keyword = (document.getElementById('search') as HTMLInputElement).value
@@ -75,7 +78,7 @@ function App() {
         <Heading1>Phone Book</Heading1>
         <hr />
         <FormContainer getList={getList} checkUnique={checkUnique} dataUnique={dataUnique} />
-        <ListContainer list={list} getList={getList} limit={limit} handleSearch={handleSearch} />
+        <ListContainer list={list} getList={getList} limit={limit} handleSearch={handleSearch} setLocal={setLocal} />
         <NotificationContainer/>
       </Container>
     </Body>

@@ -8,10 +8,9 @@ type Props = {
   data: any,
   dataIndex: any,
   handleShow: any,
-  isFavourite?: boolean
 };
 
-const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow}) => {
+const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow,}) => {
   let name = `${data?.first_name} ${data?.last_name}`
   if(name.length > 10) {
     name = name.substring(0, 10) + '...'
