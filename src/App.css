@@ -1,5 +1,6 @@
 body {
-    background: #470f0f1f;
+    background: url('./background-img.jpg');
+    background-size: cover;
 }
 
 @media only screen and (max-width: 800px) {

@@ -4,9 +4,6 @@ import { css } from '@emotion/react'
 const small = '12px'
 const medium = '16px'
 const large = '24px'
-const darkColor = '#385b46a1'
-const lightColor = '#470f0f1f'
-const bold = '600'
 
 const boxShadow = css({
   boxShadow: 'rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;})'
@@ -56,7 +53,7 @@ export const Profile = styled('div')`
   height: 46px;
   text-align: center;
   display: flex;
-  align-items: center;
+  justify-content: center;
   color: #fff;
   margin-right: ${small};
 `;
@@ -76,7 +73,6 @@ export const Description = styled('div')`
 export const Heading1 = styled('div')`
   font-weight: 600;
   font-size: 24px;
-  width: max-content;
 `;
 
 export const Heading2 = styled('div')`

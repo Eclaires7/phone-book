@@ -1,5 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
-import { Post } from "../common/post.interface";
+import { gql } from "@apollo/client";
 
 export const GET_LIST = gql`
       query GetContactList($distinct_on: [contact_select_column!], $limit: Int, $offset: Int, $order_by: [contact_order_by!], $where: contact_bool_exp) {
@@ -74,9 +73,3 @@ export const DELETE_CONTACT = gql`
         }
       }
 `
-// export const useGetPosts = (): Post[] | undefined => {
-//     const { data } = useQuery(GET_LIST, {
-//         variables: { options: { paginate: { page: 1, limit: 10 } } }
-//     });
-//     return data?.posts?.data;
-// }
