@@ -5,12 +5,11 @@ import './App.css';
 
 import {NotificationContainer} from 'react-notifications';
 import React, {useState, useEffect, useMemo} from 'react';
-import { gql, useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_LIST } from './hooks/useGetPosts';
 
 function App() {
   const [list, setList] = useState<any[]>([]);
-  // console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ list', list)
   const limit = 10;
   const [keyword, setKeyword] =  useState<string | null>('');
   const [local, setLocal] = useState(localStorage.getItem('favourites'))
@@ -34,19 +33,22 @@ function App() {
     if(listPhone !== undefined) {
       let list = listPhone?.contact
       const favourites = JSON.parse(localStorage.getItem('favourites') || '[]')
-      let withoutFav : any[] = []
       if (favourites.length > 0) {
-        let arr = []
-
-        favourites?.map((favourite: any) => { 
-          console.log(favourite,'favourite');
-          
-          arr = list?.filter((function (item: any) {
+        let withoutFav = list
+        let arrFinalFavourites : any[] = []
+        
+        Array.from(favourites)?.forEach((favourite: any) => {
+          withoutFav = withoutFav?.filter((function (item: any) {
             return favourite?.id !== item?.id
           }))
+          
+          let arrFavourite = list?.find((function (item: any) {
+            return favourite?.id === item?.id
+          }))
+          arrFavourite = {...arrFavourite, isFavourite: true}
+          arrFinalFavourites = [...arrFinalFavourites, arrFavourite]
         })
 
-        withoutFav = arr
         let arrWithProperty : any[] = []
         for(let element of withoutFav) {
           element = {...element, isFavourite: false}
@@ -54,7 +56,7 @@ function App() {
         }
 
         withoutFav = arrWithProperty
-        favourites?.map((favourite: any) => (
+        arrFinalFavourites?.map((favourite: any) => (
           withoutFav = [...withoutFav, favourite]
         ))
         
@@ -78,7 +80,7 @@ function App() {
         <Heading1>Phone Book</Heading1>
         <hr />
         <FormContainer getList={getList} checkUnique={checkUnique} dataUnique={dataUnique} />
-        <ListContainer list={list} getList={getList} limit={limit} handleSearch={handleSearch} setLocal={setLocal} />
+        <ListContainer list={list} getList={getList} limit={limit} handleSearch={handleSearch} setLocal={setLocal} local={local} />
         <NotificationContainer/>
       </Container>
     </Body>

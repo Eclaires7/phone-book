@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react"
 import React, {useState, useEffect} from 'react';
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {NotificationManager} from 'react-notifications';
 import {Heading1, Heading2, FormWrapper} from '../emotion'
 import {Button} from 'react-bootstrap';
@@ -23,6 +23,7 @@ function FormContainer({getList, checkUnique, dataUnique}) {
       resetData()
       getList()
     }
+    // eslint-disable-next-line
   }, [addedContact])
 
   function resetData() {
@@ -39,6 +40,7 @@ function FormContainer({getList, checkUnique, dataUnique}) {
     } else if (dataUnique?.contact?.length > 0) {
       NotificationManager.error('Name must be unique');
     }
+    // eslint-disable-next-line
   }, [dataUnique])
 
   function checkUniqueName() {

@@ -10,15 +10,14 @@ import {ListWrapper} from '../emotion'
 import { DELETE_CONTACT, POST_NUMBER } from '../hooks/useGetPosts';
 import ContactPillComponent from '../components/ContactPillComponent'
 
-function ListContainer({list, getList, limit, handleSearch, setLocal}) {
+function ListContainer({list, getList, limit, handleSearch, setLocal, local}) {
   const [show, setShow] = useState(false);
   const [page, setPage] = useState(1);
   const [clickIndex, setClickIndex] = useState(0);
   const modifiedClickIndex = useMemo(() => {
     return page === 1 ? clickIndex : clickIndex + (10 * (page-1))
+    // eslint-disable-next-line
   }, [clickIndex])
-  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ clickIndex', clickIndex)
-  console.log('🍕 ~ %c Console ', 'background:cadetblue; color:white;', ' ~ modifiedClickIndex', modifiedClickIndex)
   const [newNumber, setNewNumber] = useState({isNewNumber: false, number: ''})
 
   const handleClose = () => setShow(false);
@@ -27,15 +26,23 @@ function ListContainer({list, getList, limit, handleSearch, setLocal}) {
     setShow(true)
   };
   
-  const [addNewNumber, {data: dataAdded}] = useMutation(POST_NUMBER)
+  const [addNewNumber] = useMutation(POST_NUMBER)
   const [deleteContact, {data: dataDeleted}] = useMutation(DELETE_CONTACT)
 
   useEffect(() => {
     if(dataDeleted?.delete_contact_by_pk?.id === list?.[modifiedClickIndex]?.id && dataDeleted?.delete_contact_by_pk?.id !== undefined) {
+      let aa = JSON.parse(local)
+      const remainingLocal = aa?.filter((function (item: any) {
+        return dataDeleted?.delete_contact_by_pk?.id !== item?.id
+      }))
+
+      localStorage.setItem('favourites', JSON.stringify(remainingLocal))
+      setLocal(JSON.stringify(remainingLocal))
       handleClose()
       NotificationManager.success('Delete Success')
       getList()
     }
+    // eslint-disable-next-line
   }, [dataDeleted])
 
   useEffect(() => {
@@ -124,7 +131,7 @@ function ListContainer({list, getList, limit, handleSearch, setLocal}) {
                   <div key={phoneIndex} css={css`display:flex;justify-content: space-between`}>
                     <div>{phone?.number}</div>
                     <div>
-                      <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png" css={css`cursor:pointer`} width={15} height={15} />
+                      <img src="https://img.icons8.com/ios-glyphs/30/000000/edit--v1.png" alt='img-profile' css={css`cursor:pointer`} width={15} height={15} />
                     </div>
                   </div>
                   <hr />
