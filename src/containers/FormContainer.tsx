@@ -89,7 +89,6 @@ function FormContainer({getList, checkUnique, dataUnique}) {
     } else { 
       addContact({ variables: data })
     }
-    
   }
 
   function handlePhones(e: any, phoneIndex: number) {

@@ -47,11 +47,18 @@ function App() {
           let arrFavourite = list?.find((function (item: any) {
             return favourite?.id === item?.id
           }))
-          arrFavourite = {...arrFavourite, isFavourite: true}
-          arrFinalFavourites = [...arrFinalFavourites, arrFavourite]
-        })
-        arrFinalFavourites.sort((a, b) => {
-          return a.first_name.localeCompare(b.first_name)
+
+          if (arrFavourite) {
+            arrFavourite = {...arrFavourite, isFavourite: true}
+            arrFinalFavourites = [...arrFinalFavourites, arrFavourite]
+          }
+
+          // sorting alphabetically favourites
+          if (arrFavourite.length > 0){
+            arrFavourite?.sort((a, b) => {
+              return a?.first_name?.localeCompare(b?.first_name)
+            })
+          }
         })
         setListFav(arrFinalFavourites)
 
@@ -62,14 +69,22 @@ function App() {
         }
 
         withoutFav = arrWithProperty
-        withoutFav.sort((a, b) => a.first_name.localeCompare(b.first_name))
+        // sorting alphabetically general
+        if(withoutFav.length > 0) {
+          withoutFav.sort((a, b) => {
+            return a?.first_name?.localeCompare(b?.first_name)
+          })
+        }
         setList(withoutFav)
         handlePage(withoutFav)
       } else {
         setListFav([])
-        list.sort((a, b) => {
-          return a.first_name.localeCompare(b.first_name)
-        })
+        // sorting alphabetically general
+        if(list.length > 0) {
+          list.sort((a, b) => {
+            return a?.first_name?.localeCompare(b?.first_name)
+          })
+        }
         setList(list)
         handlePage(list)
       }
@@ -79,7 +94,7 @@ function App() {
 
   function handlePage(list:any) {
     if (page > 1) {
-      if (list.length <= (10*(page-1)) ) {        
+      if (list.length <= (10*(page-1)) ) { //handling page because of unordinary page changes   
         setPage(page - 1)
       } else setPage(page)
     } else setPage(page)
