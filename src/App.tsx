@@ -10,8 +10,10 @@ import { GET_LIST } from './hooks/useGetPosts';
 
 function App() {
   const [list, setList] = useState<any[]>([]);
+  const [listFav, setListFav] = useState<any[]>([]);
   const limit = 10;
   const [keyword, setKeyword] =  useState<string | null>('');
+  const [page, setPage] = useState(1);
   const [local, setLocal] = useState(localStorage.getItem('favourites'))
 
   const paramGetList = useMemo(() => ({
@@ -31,7 +33,7 @@ function App() {
 
   useEffect(() => {
     if(listPhone !== undefined) {
-      let list = listPhone?.contact
+      let list = [...listPhone?.contact]
       const favourites = JSON.parse(localStorage.getItem('favourites') || '[]')
       if (favourites.length > 0) {
         let withoutFav = list
@@ -48,6 +50,10 @@ function App() {
           arrFavourite = {...arrFavourite, isFavourite: true}
           arrFinalFavourites = [...arrFinalFavourites, arrFavourite]
         })
+        arrFinalFavourites.sort((a, b) => {
+          return a.first_name.localeCompare(b.first_name)
+        })
+        setListFav(arrFinalFavourites)
 
         let arrWithProperty : any[] = []
         for(let element of withoutFav) {
@@ -56,18 +62,28 @@ function App() {
         }
 
         withoutFav = arrWithProperty
-        arrFinalFavourites?.map((favourite: any) => (
-          withoutFav = [...withoutFav, favourite]
-        ))
-        
-        // sorting from fav to general
-        withoutFav.sort(x => x.isFavourite ? -1 : 1)
+        withoutFav.sort((a, b) => a.first_name.localeCompare(b.first_name))
         setList(withoutFav)
+        handlePage(withoutFav)
       } else {
+        setListFav([])
+        list.sort((a, b) => {
+          return a.first_name.localeCompare(b.first_name)
+        })
         setList(list)
+        handlePage(list)
       }
     }
+    // eslint-disable-next-line
   }, [listPhone, local])
+
+  function handlePage(list:any) {
+    if (page > 1) {
+      if (list.length <= (10*(page-1)) ) {        
+        setPage(page - 1)
+      } else setPage(page)
+    } else setPage(page)
+  }
   
   function handleSearch() {
     const keyword = (document.getElementById('search') as HTMLInputElement).value
@@ -80,7 +96,7 @@ function App() {
         <Heading1>Phone Book</Heading1>
         <hr />
         <FormContainer getList={getList} checkUnique={checkUnique} dataUnique={dataUnique} />
-        <ListContainer list={list} getList={getList} limit={limit} handleSearch={handleSearch} setLocal={setLocal} local={local} />
+        <ListContainer list={list} listFav={listFav} page={page} setPage={setPage} getList={getList} limit={limit} handleSearch={handleSearch} setLocal={setLocal} local={local} />
         <NotificationContainer/>
       </Container>
     </Body>

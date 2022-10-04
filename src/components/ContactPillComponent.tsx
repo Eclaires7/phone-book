@@ -8,16 +8,17 @@ type Props = {
   data: any,
   dataIndex: any,
   handleShow: any,
+  type: string
 };
 
-const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow,}) => {
+const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow, type}) => {
   let name = `${data?.first_name} ${data?.last_name}`
   if(name.length > 10) {
     name = name.substring(0, 10) + '...'
   }
 
   return (
-    <ContactPill onClick={()=> handleShow(dataIndex)} className='contact-pill'>
+    <ContactPill onClick={()=> handleShow(dataIndex, type)} className='contact-pill'>
         <Profile>{data?.first_name?.substring(0,1).toUpperCase()}{data?.last_name?.substring(0,1).toUpperCase()}</Profile>
         <Information>
             <Description>
@@ -27,7 +28,7 @@ const ContactPillComponent: FC<Props> = ({data, dataIndex, handleShow,}) => {
             </div>
             </Description>
             {data?.isFavourite &&
-              <img src="https://img.icons8.com/color/48/000000/filled-like.png" width={15} height={15} /> 
+              <img alt='love' src="https://img.icons8.com/color/48/000000/filled-like.png" width={15} height={15} /> 
             }
         </Information>
     </ContactPill>
