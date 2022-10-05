@@ -19,7 +19,9 @@ function ListContainer({list, listFav, page, setPage, getList, limit, handleSear
 
   const handleClose = () => setShow(false);
   const handleShow = (dataIndex: number, type: string) => {
-    setClickIndex(page === 1 ? dataIndex : dataIndex + (10 * (page-1)))
+    if(type === 'general') {
+      setClickIndex(page === 1 ? dataIndex : dataIndex + (10 * (page-1)))
+    } else setClickIndex(dataIndex)
     setClickType(type)
     setShow(true)
   };

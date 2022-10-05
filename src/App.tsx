@@ -54,7 +54,7 @@ function App() {
           }
 
           // sorting alphabetically favourites
-          if (arrFavourite.length > 0){
+          if (arrFavourite?.length > 0){
             arrFavourite?.sort((a, b) => {
               return a?.first_name?.localeCompare(b?.first_name)
             })
@@ -70,7 +70,7 @@ function App() {
 
         withoutFav = arrWithProperty
         // sorting alphabetically general
-        if(withoutFav.length > 0) {
+        if(withoutFav?.length > 0) {
           withoutFav.sort((a, b) => {
             return a?.first_name?.localeCompare(b?.first_name)
           })
@@ -80,7 +80,7 @@ function App() {
       } else {
         setListFav([])
         // sorting alphabetically general
-        if(list.length > 0) {
+        if(list?.length > 0) {
           list.sort((a, b) => {
             return a?.first_name?.localeCompare(b?.first_name)
           })
